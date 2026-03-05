@@ -19,10 +19,12 @@ public class OrderServiceImpl implements OrderService {
     public Order createOrder(OrderDTO orderDTO) {
         Order order = new Order();
         order.setUserId(orderDTO.getUserId());
-        order.setStartLocation(orderDTO.getStartLocation());
-        order.setEndLocation(orderDTO.getEndLocation());
-        order.setDuration(orderDTO.getDuration());
-        order.setPrice(calculatePrice(orderDTO.getDuration()));
+        order.setStartLocation(orderDTO.getRoute());
+        order.setEndLocation(orderDTO.getRoute());
+        order.setStartTime(orderDTO.getStartTime());
+        order.setEndTime(orderDTO.getEndTime());
+        order.setTotalCost(orderDTO.getTotalCost() != null ? orderDTO.getTotalCost().doubleValue() : 0.0);
+        order.setStatus(orderDTO.getStatus() != null ? orderDTO.getStatus() : "CREATED");
         return orderRepository.save(order);
     }
 
@@ -39,12 +41,5 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
-    }
-
-    private double calculatePrice(long duration) {
-        double rate = 6.0; // Minimum rate per hour
-        double maxRate = 10.0; // Maximum rate per hour
-        double price = (duration / 3600.0) * rate; // Convert seconds to hours
-        return Math.min(price, maxRate);
     }
 }

@@ -1,14 +1,13 @@
 package com.graduation.platform.service;
 
 import com.graduation.platform.model.dto.OrderDTO;
-import com.graduation.platform.model.vo.OrderVO;
+import com.graduation.platform.model.entity.Order;
 
 import java.util.List;
 
 public interface OrderService {
-    OrderVO createOrder(OrderDTO orderDTO);
-    OrderVO getOrderById(Long orderId);
-    List<OrderVO> getAllOrders();
-    void updateOrder(Long orderId, OrderDTO orderDTO);
+    Order createOrder(OrderDTO orderDTO);
+    Order getOrderById(Long orderId);
+    List<Order> getAllOrders();
     void deleteOrder(Long orderId);
 }

@@ -1,6 +1,7 @@
 package com.graduation.platform.controller;
 
 import com.graduation.platform.model.dto.NavigationDTO;
+import com.graduation.platform.model.entity.Route;
 import com.graduation.platform.service.NavigationService;
 import com.graduation.platform.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,20 +17,20 @@ public class NavigationController {
     private NavigationService navigationService;
 
     @GetMapping("/routes")
-    public Result<List<NavigationDTO>> getRoutes() {
-        List<NavigationDTO> routes = navigationService.getAllRoutes();
+    public Result<List<Route>> getRoutes() {
+        List<Route> routes = navigationService.getRoutes();
         return Result.success(routes);
     }
 
-    @PostMapping("/start")
-    public Result<String> startNavigation(@RequestBody NavigationDTO navigationDTO) {
-        navigationService.startNavigation(navigationDTO);
-        return Result.success("Navigation started successfully");
+    @PostMapping("/save")
+    public Result<String> saveRoute(@RequestBody NavigationDTO navigationDTO) {
+        navigationService.saveRoute(navigationDTO);
+        return Result.success("Route saved successfully");
     }
 
-    @PostMapping("/stop")
-    public Result<String> stopNavigation(@RequestBody NavigationDTO navigationDTO) {
-        navigationService.stopNavigation(navigationDTO);
-        return Result.success("Navigation stopped successfully");
+    @DeleteMapping("/routes/{id}")
+    public Result<String> deleteRoute(@PathVariable Long id) {
+        navigationService.deleteRoute(id);
+        return Result.success("Route deleted successfully");
     }
 }

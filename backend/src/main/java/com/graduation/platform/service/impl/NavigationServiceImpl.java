@@ -30,8 +30,6 @@ public class NavigationServiceImpl implements NavigationService {
         Route route = new Route();
         route.setStartLocation(navigationDTO.getStartLocation());
         route.setEndLocation(navigationDTO.getEndLocation());
-        route.setDistance(navigationDTO.getDistance());
-        route.setDuration(navigationDTO.getDuration());
         routeRepository.save(route);
     }
 

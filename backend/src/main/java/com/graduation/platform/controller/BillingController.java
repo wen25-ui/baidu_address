@@ -2,6 +2,7 @@ package com.graduation.platform.controller;
 
 import com.graduation.platform.common.Result;
 import com.graduation.platform.model.dto.BillingDTO;
+import com.graduation.platform.model.entity.BillingRecord;
 import com.graduation.platform.service.BillingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,20 +17,26 @@ public class BillingController {
     private BillingService billingService;
 
     @PostMapping("/create")
-    public Result createBilling(@RequestBody BillingDTO billingDTO) {
-        billingService.createBilling(billingDTO);
-        return Result.success("Billing record created successfully");
+    public Result<BillingRecord> createBilling(@RequestBody BillingDTO billingDTO) {
+        BillingRecord record = billingService.createBillingRecord(billingDTO);
+        return Result.success(record);
     }
 
     @GetMapping("/list")
-    public Result<List<BillingDTO>> listBillings() {
-        List<BillingDTO> billings = billingService.listBillings();
+    public Result<List<BillingRecord>> listBillings() {
+        List<BillingRecord> billings = billingService.getAllBillingRecords();
         return Result.success(billings);
     }
 
-    @GetMapping("/revenue")
-    public Result<Double> getPlatformRevenue() {
-        Double revenue = billingService.calculatePlatformRevenue();
-        return Result.success(revenue);
+    @GetMapping("/{id}")
+    public Result<BillingRecord> getBillingById(@PathVariable Long id) {
+        BillingRecord record = billingService.getBillingRecordById(id);
+        return Result.success(record);
+    }
+
+    @DeleteMapping("/{id}")
+    public Result<Void> deleteBilling(@PathVariable Long id) {
+        billingService.deleteBillingRecord(id);
+        return Result.success(null);
     }
 }
