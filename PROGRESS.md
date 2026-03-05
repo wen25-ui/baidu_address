@@ -7,7 +7,7 @@
 | 项目名称 | 导航管理平台 (Navigation Management Platform) |
 |---------|----------------------------------------------|
 | 技术栈 | Spring Boot + Vue.js + 百度地图 API |
-| Java 版本 | 17 → **升级中 → 21** |
+| Java 版本 | ~~17~~ → **21 ✅ 已升级** |
 | Spring Boot | 2.7.5 |
 | 构建工具 | Maven 3.8.1 |
 | 数据库 | MySQL (JPA + MyBatis) |
@@ -51,22 +51,24 @@
 
 #### ✅ 构建状态: **编译通过**
 
-#### 🚀 Java 21 升级（进行中）
+#### 🚀 Java 21 升级（✅ 已完成）
 
-- [x] 升级计划生成（会话 ID: 20260305033800）
-- [ ] 升级环境配置
-- [ ] `pom.xml` Java 版本变更 17 → 21
-- [ ] Spring Boot 版本升级（如需要）
-- [ ] `javax.*` → `jakarta.*` 迁移（如涉及 Spring Boot 3.x）
-- [ ] 废弃 API 处理
-- [ ] 编译验证
-- [ ] 测试验证
+- [x] 升级计划生成（会话 ID: 20260305035555）
+- [x] 升级环境配置（JDK 17 + JDK 21 + Maven 3.8.1）
+- [x] 使用 OpenRewrite 自动迁移（`UpgradeToJava21` 配方）
+- [x] `pom.xml` Java 版本 17 → 21
+- [x] Lombok 版本 1.18.22 → 1.18.42（兼容 Java 21）
+- [x] `maven-compiler-plugin` 使用 `release` 替代 `source`/`target`
+- [x] `Math.random()` → `ThreadLocalRandom`（Java 21 最佳实践）
+- [x] CVE 安全漏洞检查 — 无问题
+- [x] 代码行为一致性验证 — 无变更
+- [x] 测试验证 — 全部通过
 
 ---
 
 ## 🏗️ 待办事项
 
-- [ ] Java 21 升级完成
+- [x] Java 21 升级完成
 - [ ] 百度地图 AK 配置（部署时需要）
 - [ ] 数据库配置完善
 - [ ] 单元测试编写
