@@ -1,0 +1,24 @@
+{
+  "name": "navigation-management-platform",
+  "version": "1.0.0",
+  "description": "A management platform for navigation services with real-time navigation and billing.",
+  "main": "index.js",
+  "scripts": {
+    "serve": "vite",
+    "build": "vite build",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "vue": "^3.2.0",
+    "vue-router": "^4.0.0",
+    "vuex": "^4.0.0",
+    "axios": "^0.21.1",
+    "element-plus": "^1.0.2-beta.50"
+  },
+  "devDependencies": {
+    "vite": "^2.0.0",
+    "eslint": "^7.0.0",
+    "eslint-plugin-vue": "^7.0.0"
+  },
+  "license": "MIT"
+}
