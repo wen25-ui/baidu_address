@@ -42,11 +42,17 @@ export default {
     const revenueRecords = ref([]);
 
     const loadRevenueData = async () => {
-      const data = await fetchRevenueData();
-      totalRevenue.value = data.totalRevenue;
-      monthlyRevenue.value = data.monthlyRevenue;
-      totalOrders.value = data.totalOrders;
-      revenueRecords.value = data.records;
+      try {
+        const data = await fetchRevenueData();
+        if (data) {
+          totalRevenue.value = data.totalRevenue || 0;
+          monthlyRevenue.value = data.monthlyRevenue || 0;
+          totalOrders.value = data.totalOrders || 0;
+          revenueRecords.value = data.records || [];
+        }
+      } catch (error) {
+        console.error('获取收入数据失败:', error);
+      }
     };
 
     onMounted(loadRevenueData);

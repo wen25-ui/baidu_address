@@ -17,7 +17,10 @@
 </template>
 
 <script>
+import { login } from '@/api/user';
+
 export default {
+  name: 'Login',
   data() {
     return {
       username: '',
@@ -28,18 +31,19 @@ export default {
   methods: {
     async handleLogin() {
       try {
-        // 调用登录API
-        const response = await this.$http.post('/api/login', {
+        const response = await login({
           username: this.username,
           password: this.password
         });
-        // 登录成功，处理响应
-        if (response.data.success) {
-          // 存储用户信息或token
-          this.$store.commit('setUser', response.data.user);
-          this.$router.push('/dashboard'); // 跳转到仪表盘
+        if (response && response.success !== false) {
+          // 存储 token
+          if (response.token) {
+            localStorage.setItem('token', response.token);
+          }
+          this.$store.commit('SET_USER', response.user || response.data);
+          this.$router.push('/dashboard');
         } else {
-          this.errorMessage = response.data.message;
+          this.errorMessage = response.message || '登录失败';
         }
       } catch (error) {
         this.errorMessage = '登录失败，请重试。';

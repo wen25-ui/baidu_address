@@ -1,14 +1,17 @@
 import axios from 'axios';
 
 const request = axios.create({
-    baseURL: process.env.VUE_APP_API_URL || 'http://localhost:8080/api',
+    baseURL: '',
     timeout: 10000,
 });
 
 // 请求拦截器
 request.interceptors.request.use(
     config => {
-        // 可以在这里添加请求头或其他配置
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
         return config;
     },
     error => {
@@ -23,6 +26,10 @@ request.interceptors.response.use(
     },
     error => {
         // 处理错误响应
+        if (error.response && error.response.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+        }
         return Promise.reject(error);
     }
 );

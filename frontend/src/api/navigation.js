@@ -1,19 +1,17 @@
-import axios from 'axios';
-
-const API_BASE_URL = 'http://localhost:8080/api/navigation';
+import request from '../utils/request';
 
 export const getRoutes = () => {
-    return axios.get(`${API_BASE_URL}/routes`);
+    return request.get('/api/navigation/routes');
 };
 
 export const startNavigation = (routeId) => {
-    return axios.post(`${API_BASE_URL}/start`, { routeId });
+    return request.post('/api/navigation/start', { routeId });
 };
 
 export const endNavigation = (routeId) => {
-    return axios.post(`${API_BASE_URL}/end`, { routeId });
+    return request.post('/api/navigation/end', { routeId });
 };
 
 export const getNavigationStatus = (routeId) => {
-    return axios.get(`${API_BASE_URL}/status/${routeId}`);
+    return request.get(`/api/navigation/status/${routeId}`);
 };

@@ -32,3 +32,10 @@ export const deleteBillingRecord = (id) => {
         method: 'delete'
     });
 };
+
+export const fetchRevenueData = () => {
+    return request({
+        url: `${BASE_URL}/revenue`,
+        method: 'get'
+    });
+};

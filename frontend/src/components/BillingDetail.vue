@@ -16,7 +16,10 @@
 </template>
 
 <script>
+import { getBillingRecords } from '@/api/billing';
+
 export default {
+  name: 'BillingDetail',
   data() {
     return {
       billingInfo: null,
@@ -28,8 +31,10 @@ export default {
   methods: {
     async fetchBillingDetail() {
       try {
-        const response = await this.$http.get('/api/billing/detail'); // 假设API路径
-        this.billingInfo = response.data;
+        const response = await getBillingRecords();
+        if (response && response.length > 0) {
+          this.billingInfo = response[0];
+        }
       } catch (error) {
         console.error('获取计费详情失败:', error);
       }

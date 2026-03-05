@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="order in orders" :key="order.id">
+        <tr v-for="order in localOrders" :key="order.id">
           <td>{{ order.id }}</td>
           <td>{{ order.user }}</td>
           <td>{{ order.startPoint }}</td>
@@ -32,32 +32,49 @@
 </template>
 
 <script>
+import orderApi from '@/api/order';
+
 export default {
+  name: 'OrderTable',
+  props: {
+    orders: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
-      orders: []
+      localOrders: []
     };
+  },
+  watch: {
+    orders: {
+      handler(val) {
+        this.localOrders = val;
+      },
+      immediate: true
+    }
   },
   methods: {
     fetchOrders() {
-      // 这里调用API获取订单数据
-      this.$api.order.getOrders().then(response => {
-        this.orders = response.data;
+      orderApi.getOrderList().then(response => {
+        this.localOrders = response.data || response;
       });
     },
     viewOrder(orderId) {
-      // 跳转到订单详情页面
-      this.$router.push({ name: 'OrderDetail', params: { id: orderId } });
+      // 查看订单详情
+      console.log('查看订单:', orderId);
     },
     cancelOrder(orderId) {
-      // 调用API取消订单
-      this.$api.order.cancelOrder(orderId).then(() => {
-        this.fetchOrders(); // 重新获取订单列表
+      orderApi.deleteOrder(orderId).then(() => {
+        this.fetchOrders();
       });
     }
   },
   mounted() {
-    this.fetchOrders();
+    if (!this.orders || this.orders.length === 0) {
+      this.fetchOrders();
+    }
   }
 };
 </script>

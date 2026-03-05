@@ -23,6 +23,13 @@ export const getUserInfo = (userId) => {
     });
 };
 
+export const getUsers = () => {
+    return request({
+        url: '/api/user/list',
+        method: 'get'
+    });
+};
+
 export const updateUser = (userId, data) => {
     return request({
         url: `/api/user/${userId}`,

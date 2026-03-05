@@ -3,11 +3,11 @@
     <h1 class="header-title">导航管理平台</h1>
     <nav class="header-nav">
       <router-link to="/dashboard">仪表盘</router-link>
-      <router-link to="/order-management">订单管理</router-link>
-      <router-link to="/navigation-map">导航</router-link>
-      <router-link to="/billing-management">计费管理</router-link>
-      <router-link to="/user-management">用户管理</router-link>
-      <router-link to="/platform-revenue">平台收入</router-link>
+      <router-link to="/orders">订单管理</router-link>
+      <router-link to="/navigation">导航</router-link>
+      <router-link to="/billing">计费管理</router-link>
+      <router-link to="/users">用户管理</router-link>
+      <router-link to="/revenue">平台收入</router-link>
     </nav>
   </header>
 </template>

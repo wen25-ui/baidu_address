@@ -40,13 +40,21 @@ export default {
     const users = ref([]);
 
     const fetchUsers = async () => {
-      const response = await getUsers();
-      users.value = response.data;
+      try {
+        const response = await getUsers();
+        users.value = response.data || response || [];
+      } catch (error) {
+        console.error('获取用户列表失败:', error);
+      }
     };
 
     const deleteUser = async (userId) => {
-      await deleteUserApi(userId);
-      fetchUsers();
+      try {
+        await deleteUserApi(userId);
+        fetchUsers();
+      } catch (error) {
+        console.error('删除用户失败:', error);
+      }
     };
 
     const editUser = (userId) => {

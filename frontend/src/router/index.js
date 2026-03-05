@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import OrderManagement from '../views/OrderManagement.vue'
@@ -7,8 +6,6 @@ import NavigationMap from '../views/NavigationMap.vue'
 import BillingManagement from '../views/BillingManagement.vue'
 import UserManagement from '../views/UserManagement.vue'
 import PlatformRevenue from '../views/PlatformRevenue.vue'
-
-Vue.use(Router)
 
 const routes = [
   {
@@ -48,8 +45,8 @@ const routes = [
   }
 ]
 
-const router = new Router({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(),
   routes
 })
 

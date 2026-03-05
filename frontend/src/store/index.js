@@ -1,13 +1,10 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import user from '../api/user';
-import order from '../api/order';
-import navigation from '../api/navigation';
-import billing from '../api/billing';
+import { createStore } from 'vuex';
+import { getUserInfo } from '../api/user';
+import orderApi from '../api/order';
+import { getRoutes } from '../api/navigation';
+import { getBillingRecords } from '../api/billing';
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
+export default createStore({
   state: {
     user: null,
     orders: [],
@@ -33,28 +30,28 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    fetchUser({ commit }) {
-      return user.getUser().then(response => {
+    fetchUser({ commit }, userId) {
+      return getUserInfo(userId).then(response => {
         commit('SET_USER', response.data);
       });
     },
     fetchOrders({ commit }) {
-      return order.getOrders().then(response => {
+      return orderApi.getOrderList().then(response => {
         commit('SET_ORDERS', response.data);
       });
     },
     fetchNavigationData({ commit }) {
-      return navigation.getNavigationData().then(response => {
+      return getRoutes().then(response => {
         commit('SET_NAVIGATION_DATA', response.data);
       });
     },
     fetchBillingRecords({ commit }) {
-      return billing.getBillingRecords().then(response => {
+      return getBillingRecords().then(response => {
         commit('SET_BILLING_RECORDS', response.data);
       });
     },
     fetchPlatformRevenue({ commit }) {
-      return billing.getPlatformRevenue().then(response => {
+      return getBillingRecords().then(response => {
         commit('SET_PLATFORM_REVENUE', response.data);
       });
     },

@@ -64,13 +64,47 @@
 - [x] 代码行为一致性验证 — 无变更
 - [x] 测试验证 — 全部通过
 
+### 2026-03-05（前端整改 — Web 应用方案）
+
+#### 🌐 前端项目整改为标准 Vue 3 + Vite Web 应用
+
+- [x] **项目配置修复**
+  - 升级 `package.json` 依赖版本（Vue 3.3、Vite 5、Element Plus 2.4、Axios 1.6）
+  - 添加缺失的 `@vitejs/plugin-vue` 开发依赖
+  - `index.html` 移至项目根目录（Vite 标准结构）
+  - `vite.config.js` 添加 `@` 路径别名，修复 API 代理配置
+- [x] **Vue 2 → Vue 3 语法迁移**
+  - `router/index.js`: `Vue.use(Router)` → `createRouter` + `createWebHistory`
+  - `store/index.js`: `Vue.use(Vuex)` + `new Vuex.Store` → `createStore`
+  - `main.js`: 引入 Element Plus 并注册
+- [x] **API 请求层统一**
+  - `request.js`: 环境变量 `process.env.VUE_APP_` → `import.meta.env.VITE_`
+  - `request.js`: 添加 Token 认证拦截器和 401 自动跳转
+  - `navigation.js`: 独立 axios 实例 → 统一使用 request 封装
+  - `user.js`: 添加 `getUsers` 方法
+  - `billing.js`: 添加 `fetchRevenueData` 方法
+- [x] **组件修复**
+  - `Header.vue` / `Sidebar.vue`: 路由路径对齐路由表（如 `/order-management` → `/orders`）
+  - `BillingDetail.vue`: `this.$http` → 导入 `getBillingRecords` API
+  - `OrderTable.vue`: `this.$api` → 导入 `orderApi`，支持 props 传入数据
+- [x] **页面修复**
+  - `Login.vue`: `this.$http.post` → 导入 `login` API，修复 Store mutation 名称
+  - `OrderManagement.vue`: 移除不存在的 `fetchOrders`/`fetchRoutes` 导入
+  - `UserManagement.vue` / `PlatformRevenue.vue`: 添加错误处理
+  - `App.vue`: 登录页不显示 Header/Sidebar 布局
+- [x] **工具函数**
+  - `auth.js`: 补充 Token 存取方法（`getToken`/`setToken`/`removeToken`）
+
+#### ✅ 前端启动状态: **Vite 开发服务器已启动 — http://localhost:3000**
+
 ---
 
 ## 🏗️ 待办事项
 
 - [x] Java 21 升级完成
+- [x] 前端 Vue 3 + Vite Web 应用整改完成
 - [ ] 百度地图 AK 配置（部署时需要）
 - [ ] 数据库配置完善
+- [ ] 后端启动并联调前端
 - [ ] 单元测试编写
-- [ ] 前端联调
 - [ ] 部署配置
