@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/navigation_platform?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+    username: root
+    password: your_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+baidu:
+  ak: your_baidu_map_ak
+  api-url: https://api.map.baidu.com/ 
+
+logging:
+  level:
+    org.springframework: INFO
+    com.graduation.platform: DEBUG
+
+# 其他开发环境特定配置可以在这里添加

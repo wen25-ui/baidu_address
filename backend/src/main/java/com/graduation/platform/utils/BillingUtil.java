@@ -3,6 +3,8 @@ package com.graduation.platform.utils;
 import com.graduation.platform.model.dto.BillingDTO;
 import com.graduation.platform.model.entity.BillingRecord;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class BillingUtil {
 
     private static final double BASE_RATE = 6.0;
@@ -10,7 +12,7 @@ public class BillingUtil {
     private static final double PLATFORM_COMMISSION_RATE = 0.2;
 
     public static double calculateBillingAmount(double hours) {
-        double rate = BASE_RATE + (Math.random() * (MAX_RATE - BASE_RATE));
+        double rate = BASE_RATE + (ThreadLocalRandom.current().nextDouble() * (MAX_RATE - BASE_RATE));
         double totalAmount = rate * hours;
         double platformCommission = totalAmount * PLATFORM_COMMISSION_RATE;
         return totalAmount - platformCommission;
