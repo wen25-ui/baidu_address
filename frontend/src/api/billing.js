@@ -1,41 +1,24 @@
-import request from '../utils/request';
+import {
+  getIncomeStats,
+  getAdminReservations
+} from './admin.js'
 
-const BASE_URL = '/api/billing';
+export const getBillingRecords = async (params = {}) => {
+  const res = await getAdminReservations({
+    status: 3,
+    pageNum: params.pageNum || 1,
+    pageSize: params.pageSize || 20
+  })
+  return res
+}
 
-export const getBillingRecords = (params) => {
-    return request({
-        url: `${BASE_URL}/records`,
-        method: 'get',
-        params
-    });
-};
+export const getBillingSummary = (startDate, endDate) => getIncomeStats(startDate, endDate)
 
-export const createBillingRecord = (data) => {
-    return request({
-        url: `${BASE_URL}/create`,
-        method: 'post',
-        data
-    });
-};
+export const createBillingRecord = () =>
+  Promise.reject(new Error('计费记录由订单结算自动生成，不支持手动创建'))
 
-export const updateBillingRecord = (id, data) => {
-    return request({
-        url: `${BASE_URL}/update/${id}`,
-        method: 'put',
-        data
-    });
-};
+export const updateBillingRecord = () =>
+  Promise.reject(new Error('计费记录不支持手动修改'))
 
-export const deleteBillingRecord = (id) => {
-    return request({
-        url: `${BASE_URL}/delete/${id}`,
-        method: 'delete'
-    });
-};
-
-export const fetchRevenueData = () => {
-    return request({
-        url: `${BASE_URL}/revenue`,
-        method: 'get'
-    });
-};
+export const deleteBillingRecord = () =>
+  Promise.reject(new Error('计费记录不支持手动删除'))

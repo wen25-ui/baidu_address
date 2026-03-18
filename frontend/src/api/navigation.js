@@ -1,17 +1,15 @@
-import request from '../utils/request';
+import {
+  getAdminParkingSpaces,
+  auditAdminParkingSpace,
+  forceOfflineAdminParkingSpace
+} from './admin.js'
 
-export const getRoutes = () => {
-    return request.get('/api/navigation/routes');
-};
+export const getRoutes = (params = {}) => getAdminParkingSpaces(params)
 
-export const startNavigation = (routeId) => {
-    return request.post('/api/navigation/start', { routeId });
-};
+export const startNavigation = (spaceId) =>
+  auditAdminParkingSpace(spaceId, true, '')
 
-export const endNavigation = (routeId) => {
-    return request.post('/api/navigation/end', { routeId });
-};
+export const endNavigation = (spaceId) =>
+  forceOfflineAdminParkingSpace(spaceId, '管理员手动下架')
 
-export const getNavigationStatus = (routeId) => {
-    return request.get(`/api/navigation/status/${routeId}`);
-};
+export const getNavigationStatus = (params = {}) => getAdminParkingSpaces(params)

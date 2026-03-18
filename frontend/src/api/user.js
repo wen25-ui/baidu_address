@@ -1,46 +1,60 @@
-import request from '../utils/request';
+/**
+ * User related API.
+ */
+import request from '../utils/request.js'
 
-export const login = (data) => {
-    return request({
-        url: '/api/user/login',
-        method: 'post',
-        data
-    });
-};
+// WeChat mini-program login
+export const wxLogin = (data) => {
+  return request.post('/v1/user/wx-login', data)
+}
 
+// User account login
+export const userLogin = (data) => {
+  return request.post('/v1/user/login', data)
+}
+
+// User account register
 export const register = (data) => {
-    return request({
-        url: '/api/user/register',
-        method: 'post',
-        data
-    });
-};
+  return request.post('/v1/user/register', data)
+}
 
-export const getUserInfo = (userId) => {
-    return request({
-        url: `/api/user/${userId}`,
-        method: 'get'
-    });
-};
+// Admin login
+export const adminLogin = (data) => {
+  return request.post('/admin/login', data)
+}
 
-export const getUsers = () => {
-    return request({
-        url: '/api/user/list',
-        method: 'get'
-    });
-};
+// Get current user info
+export const getUserInfo = () => {
+  return request.get('/v1/user/info')
+}
 
-export const updateUser = (userId, data) => {
-    return request({
-        url: `/api/user/${userId}`,
-        method: 'put',
-        data
-    });
-};
+// Update current user info
+export const updateUserInfo = (data) => {
+  return request.put('/v1/user/info', data)
+}
 
+// Real-name verify
+export const verifyUser = (data) => {
+  return request.post('/v1/user/verify', data)
+}
+
+// Credit score check
+export const checkCredit = (requiredScore = 60) => {
+  return request.get('/v1/user/credit-check', { requiredScore })
+}
+
+// Admin: list users
+export const getAllUsers = (params = {}) => {
+  const { keyword, status, pageNum = 1, pageSize = 10 } = params
+  return request.get('/admin/users', { keyword, status, pageNum, pageSize })
+}
+
+// Admin: update user status
+export const updateUserStatus = (userId, status) => {
+  return request.put(`/admin/users/${userId}/status`, { status })
+}
+
+// Admin: disable user (soft delete)
 export const deleteUser = (userId) => {
-    return request({
-        url: `/api/user/${userId}`,
-        method: 'delete'
-    });
-};
+  return updateUserStatus(userId, 0)
+}

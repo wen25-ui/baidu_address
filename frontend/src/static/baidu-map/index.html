@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>百度地图首页</title>
+  <style>
+    :root {
+      --brand: #0b78ff;
+      --brand-2: #35a6ff;
+      --text: #1f2f45;
+      --sub: #72839b;
+      --line: #e9eef6;
+      --bg: #f4f7fb;
+      --shadow: 0 10px 24px rgba(20, 35, 56, 0.16);
+      --card-shadow: 0 5px 16px rgba(20, 35, 56, 0.09);
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      overflow: hidden;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .status-row {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 12px;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .location-pill {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+    }
+
+    .pill-label {
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill-value {
+      color: #3f5068;
+      font-size: 12px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .control-btn {
+      border: none;
+      border-radius: 999px;
+      height: 34px;
+      padding: 0 12px;
+      color: #fff;
+      font-size: 12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 6px 14px rgba(11, 120, 255, 0.3);
+      cursor: pointer;
+    }
+
+    .coords-panel {
+      position: absolute;
+      left: 12px;
+      top: 58px;
+      z-index: 999;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(19, 30, 45, 0.78);
+      color: #fff;
+      font-size: 11px;
+      line-height: 1.4;
+      display: none;
+    }
+
+    .search-wrap {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 96px;
+      z-index: 999;
+      display: flex;
+      gap: 8px;
+    }
+
+    .search-input {
+      flex: 1;
+      height: 36px;
+      border: none;
+      border-radius: 18px;
+      padding: 0 12px;
+      font-size: 12px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: var(--shadow);
+      outline: none;
+    }
+
+    .results {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 140px;
+      z-index: 999;
+      max-height: 30%;
+      overflow: auto;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .result-item {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    .result-title {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .result-address {
+      margin-top: 4px;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 999;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -10px 24px rgba(20, 35, 56, 0.14);
+      transform: translateY(58%);
+      transition: transform 0.26s ease;
+    }
+
+    .sheet.expanded {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 14px 10px;
+      cursor: pointer;
+    }
+
+    .handle-bar {
+      position: absolute;
+      left: 50%;
+      top: 6px;
+      transform: translateX(-50%);
+      width: 38px;
+      height: 4px;
+      border-radius: 4px;
+      background: #d6deea;
+    }
+
+    .sheet-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .sheet-title {
+      color: #1d2d44;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .sheet-count {
+      color: #7d8ca2;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .sheet-action {
+      color: var(--brand);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .quick-entry {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 12px 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .entry-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      animation: liftIn 0.35s ease both;
+      user-select: none;
+    }
+
+    .entry-item:nth-child(2) { animation-delay: 0.06s; }
+    .entry-item:nth-child(3) { animation-delay: 0.12s; }
+    .entry-item:nth-child(4) { animation-delay: 0.18s; }
+
+    .entry-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.14);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .entry-icon.nearby { background: linear-gradient(135deg, #3f8cff 0%, #2bc7ff 100%); }
+    .entry-icon.publish { background: linear-gradient(135deg, #ff7b54 0%, #ffb347 100%); }
+    .entry-icon.myspace { background: linear-gradient(135deg, #44d7b6 0%, #36b0ff 100%); }
+    .entry-icon.favorite { background: linear-gradient(135deg, #ff5d88 0%, #ff8f6b 100%); }
+
+    .entry-text {
+      color: #304059;
+      font-size: 12px;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .ghost-btn {
+      flex: 1;
+      border: none;
+      border-radius: 999px;
+      height: 34px;
+      background: #edf4ff;
+      color: var(--brand);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .sheet-list {
+      max-height: 46vh;
+      overflow: auto;
+      padding: 4px 12px 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 42px 0;
+    }
+
+    .empty-text {
+      display: block;
+      color: #77869a;
+      font-size: 13px;
+    }
+
+    .empty-hint {
+      display: block;
+      margin-top: 6px;
+      color: #b2bdcc;
+      font-size: 12px;
+    }
+
+    .parking-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      padding: 8px;
+      background: #fff;
+      box-shadow: var(--card-shadow);
+    }
+
+    .parking-main {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .parking-title {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .parking-address {
+      margin-top: 4px;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .parking-meta {
+      margin-top: 7px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .parking-price {
+      color: #ef4e3f;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .parking-distance {
+      color: var(--brand);
+      font-size: 12px;
+    }
+
+    .parking-nav {
+      border: none;
+      border-radius: 999px;
+      height: 32px;
+      padding: 0 11px;
+      color: #fff;
+      font-size: 12px;
+      background: var(--brand);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    @keyframes liftIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+  </style>
+  <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+  <script src="https://api.map.baidu.com/api?v=3.0&ak=Ysj2vZPKWz8nwGRiPYD7MBBOvVtQiGlt"></script>
+</head>
+<body>
+  <div id="map"></div>
+
+  <div class="status-row">
+    <div id="locationPill" class="location-pill">
+      <span class="pill-label">位置</span>
+      <span id="locationText" class="pill-value">当前定位</span>
+    </div>
+    <button id="btnCoords" class="control-btn">坐标</button>
+    <button id="btnRefresh" class="control-btn">刷新</button>
+  </div>
+
+  <div id="coordsPanel" class="coords-panel"></div>
+
+  <div class="search-wrap">
+    <input id="keyword" class="search-input" placeholder="搜索目的地（百度地图）" />
+    <button id="btnSearch" class="control-btn">搜索</button>
+  </div>
+
+  <div id="results" class="results"></div>
+
+  <div id="sheet" class="sheet">
+    <div id="sheetHandle" class="sheet-handle">
+      <div class="handle-bar"></div>
+      <div class="sheet-title-wrap">
+        <span class="sheet-title">附近车位</span>
+        <span id="sheetCount" class="sheet-count">(0)</span>
+      </div>
+      <span id="sheetAction" class="sheet-action">展开</span>
+    </div>
+
+    <div class="quick-entry">
+      <div class="entry-item" data-action="nearby">
+        <div class="entry-icon nearby">附</div>
+        <div class="entry-text">附近车位</div>
+      </div>
+      <div class="entry-item" data-page="/pages/parking/publish">
+        <div class="entry-icon publish">发</div>
+        <div class="entry-text">发布车位</div>
+      </div>
+      <div class="entry-item" data-page="/pages/parking/myspaces">
+        <div class="entry-icon myspace">我</div>
+        <div class="entry-text">我的车位</div>
+      </div>
+      <div class="entry-item" data-page="/pages/favorite/favorite">
+        <div class="entry-icon favorite">藏</div>
+        <div class="entry-text">我的收藏</div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button id="btnGotoSearch" class="ghost-btn">搜索车位</button>
+      <button id="btnRoute" class="ghost-btn">路线规划</button>
+    </div>
+
+    <div id="sheetList" class="sheet-list"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search)
+    const baseLat = Number(params.get('lat')) || 39.915
+    const baseLng = Number(params.get('lng')) || 116.404
+
+    function parseMarkers() {
+      const raw = params.get('markers')
+      if (!raw) return []
+      try {
+        const list = JSON.parse(decodeURIComponent(raw))
+        return Array.isArray(list) ? list : []
+      } catch {
+        return []
+      }
+    }
+
+    function formatDistance(distance) {
+      const n = Number(distance)
+      if (!Number.isFinite(n)) return ''
+      if (n < 1) return `${Math.round(n * 1000)}m`
+      return `${n.toFixed(1)}km`
+    }
+
+    function escapeHtml(text) {
+      return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+    }
+
+    function inMiniProgram() {
+      return typeof wx !== 'undefined' && !!wx.miniProgram
+    }
+
+    function postMessage(data) {
+      if (!inMiniProgram()) return
+      wx.miniProgram.postMessage({ data })
+    }
+
+    function openMiniPage(url) {
+      if (!url) return
+      if (!inMiniProgram()) {
+        window.location.href = url
+        return
+      }
+      wx.miniProgram.navigateTo({ url })
+      postMessage({ type: 'openPage', url })
+    }
+
+    function openParkingDetail(parkingId) {
+      if (!parkingId) return
+      const url = `/pages/parking/detail?id=${Number(parkingId)}`
+      if (inMiniProgram()) {
+        wx.miniProgram.navigateTo({ url })
+      }
+      postMessage({ type: 'openParkingDetail', parkingId: Number(parkingId) })
+    }
+
+    const parkingList = parseMarkers()
+    const map = new BMap.Map('map')
+    let currentPoint = new BMap.Point(baseLng, baseLat)
+    let destinationPoint = null
+    let showCoords = false
+    let sheetExpanded = false
+
+    const coordsPanelEl = document.getElementById('coordsPanel')
+    const locationTextEl = document.getElementById('locationText')
+    const resultsEl = document.getElementById('results')
+    const sheetEl = document.getElementById('sheet')
+    const sheetCountEl = document.getElementById('sheetCount')
+    const sheetActionEl = document.getElementById('sheetAction')
+    const sheetListEl = document.getElementById('sheetList')
+
+    map.centerAndZoom(currentPoint, 14)
+    map.enableScrollWheelZoom(true)
+
+    const currentMarker = new BMap.Marker(currentPoint)
+    map.addOverlay(currentMarker)
+
+    function refreshCoords() {
+      coordsPanelEl.textContent = `Lat: ${currentPoint.lat.toFixed(6)} | Lng: ${currentPoint.lng.toFixed(6)}`
+      coordsPanelEl.style.display = showCoords ? 'block' : 'none'
+    }
+
+    function setSheetExpanded(expanded) {
+      sheetExpanded = !!expanded
+      sheetEl.classList.toggle('expanded', sheetExpanded)
+      sheetActionEl.textContent = sheetExpanded ? '收起' : '展开'
+    }
+
+    function renderParkingList() {
+      sheetCountEl.textContent = `(${parkingList.length})`
+
+      if (!parkingList.length) {
+        sheetListEl.innerHTML = `
+          <div class="empty-state">
+            <span class="empty-text">暂无附近车位</span>
+            <span class="empty-hint">试试刷新附近或搜索目的地</span>
+          </div>
+        `
+        return
+      }
+
+      sheetListEl.innerHTML = parkingList.map(item => {
+        const id = Number(item.id)
+        const name = escapeHtml(item.name || '车位')
+        const address = escapeHtml(item.address || '-')
+        const price = item.price !== null && item.price !== undefined ? `¥${escapeHtml(item.price)}/小时` : '价格待定'
+        const distance = formatDistance(item.distance)
+
+        return `
+          <div class="parking-item">
+            <div class="parking-main" data-detail="${id}">
+              <div class="parking-title">${name}</div>
+              <div class="parking-address">${address}</div>
+              <div class="parking-meta">
+                <span class="parking-price">${price}</span>
+                <span class="parking-distance">${escapeHtml(distance)}</span>
+              </div>
+            </div>
+            <button class="parking-nav" data-focus="${id}">导航</button>
+          </div>
+        `
+      }).join('')
+
+      sheetListEl.querySelectorAll('[data-detail]').forEach((node) => {
+        node.addEventListener('click', () => {
+          const id = Number(node.getAttribute('data-detail'))
+          openParkingDetail(id)
+        })
+      })
+
+      sheetListEl.querySelectorAll('[data-focus]').forEach((node) => {
+        node.addEventListener('click', (event) => {
+          event.stopPropagation()
+          const id = Number(node.getAttribute('data-focus'))
+          const item = parkingList.find((m) => Number(m.id) === id)
+          if (!item) return
+
+          const point = new BMap.Point(Number(item.lng), Number(item.lat))
+          destinationPoint = point
+          map.panTo(point)
+          map.setZoom(17)
+        })
+      })
+    }
+
+    parkingList.forEach((item) => {
+      if (!item || !item.lat || !item.lng) return
+
+      const point = new BMap.Point(Number(item.lng), Number(item.lat))
+      const marker = new BMap.Marker(point)
+      map.addOverlay(marker)
+
+      const infoHtml = `
+        <div style="min-width:190px;line-height:1.5;font-size:12px;color:#223046;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">${escapeHtml(item.name || '车位')}</div>
+          <div style="color:#5f6c80;margin-bottom:6px;">${escapeHtml(item.address || '-')}</div>
+          <div style="color:#ef4e3f;font-weight:700;margin-bottom:8px;">${item.price !== null && item.price !== undefined ? `¥${escapeHtml(item.price)}/小时` : '价格待定'}</div>
+          <button onclick="window.__openParkingDetail(${Number(item.id)})" style="border:none;border-radius:14px;padding:6px 11px;background:#0b78ff;color:#fff;font-size:12px;">查看详情</button>
+        </div>
+      `
+
+      const infoWindow = new BMap.InfoWindow(infoHtml)
+      marker.addEventListener('click', () => {
+        destinationPoint = point
+        map.openInfoWindow(infoWindow, point)
+      })
+    })
+
+    window.__openParkingDetail = openParkingDetail
+
+    const localSearch = new BMap.LocalSearch(map, {
+      onSearchComplete(result) {
+        resultsEl.innerHTML = ''
+        if (localSearch.getStatus() !== BMAP_STATUS_SUCCESS) {
+          resultsEl.style.display = 'none'
+          return
+        }
+
+        const count = result.getCurrentNumPois()
+        if (!count) {
+          resultsEl.style.display = 'none'
+          return
+        }
+
+        for (let i = 0; i < count; i += 1) {
+          const poi = result.getPoi(i)
+          const item = document.createElement('div')
+          item.className = 'result-item'
+          item.innerHTML = `
+            <div class="result-title">${escapeHtml(poi.title || '未命名地点')}</div>
+            <div class="result-address">${escapeHtml(poi.address || '-')}</div>
+          `
+          item.addEventListener('click', () => {
+            destinationPoint = poi.point
+            map.centerAndZoom(poi.point, 16)
+            resultsEl.style.display = 'none'
+            setSheetExpanded(true)
+          })
+          resultsEl.appendChild(item)
+        }
+
+        resultsEl.style.display = 'block'
+      }
+    })
+
+    document.getElementById('locationPill').addEventListener('click', () => {
+      postMessage({ type: 'refreshNearby' })
+    })
+
+    document.getElementById('btnRefresh').addEventListener('click', () => {
+      postMessage({ type: 'refreshNearby' })
+    })
+
+    document.getElementById('btnCoords').addEventListener('click', () => {
+      showCoords = !showCoords
+      refreshCoords()
+    })
+
+    document.getElementById('btnSearch').addEventListener('click', () => {
+      const keyword = document.getElementById('keyword').value.trim()
+      if (!keyword) return
+      localSearch.searchNearby(keyword, currentPoint, 10000)
+    })
+
+    document.getElementById('btnRoute').addEventListener('click', () => {
+      if (!destinationPoint) return
+      const driving = new BMap.DrivingRoute(map, {
+        renderOptions: {
+          map,
+          autoViewport: true
+        }
+      })
+      driving.search(currentPoint, destinationPoint)
+    })
+
+    document.getElementById('btnGotoSearch').addEventListener('click', () => {
+      openMiniPage('/pages/parking/search')
+    })
+
+    document.getElementById('sheetHandle').addEventListener('click', () => {
+      setSheetExpanded(!sheetExpanded)
+    })
+
+    document.querySelectorAll('.entry-item').forEach((node) => {
+      node.addEventListener('click', () => {
+        const action = node.getAttribute('data-action')
+        const page = node.getAttribute('data-page')
+
+        if (action === 'nearby') {
+          setSheetExpanded(!sheetExpanded)
+          return
+        }
+
+        if (page) {
+          openMiniPage(page)
+        }
+      })
+    })
+
+    document.addEventListener('click', (event) => {
+      const inResults = resultsEl.contains(event.target)
+      const isSearch = document.getElementById('btnSearch').contains(event.target)
+      const isInput = document.getElementById('keyword').contains(event.target)
+
+      if (!inResults && !isSearch && !isInput) {
+        resultsEl.style.display = 'none'
+      }
+    })
+
+    const geo = new BMap.Geolocation()
+    geo.getCurrentPosition((res) => {
+      if (!res || !res.point) {
+        refreshCoords()
+        renderParkingList()
+        return
+      }
+
+      currentPoint = res.point
+      currentMarker.setPosition(currentPoint)
+      map.centerAndZoom(currentPoint, 15)
+      locationTextEl.textContent = '当前定位'
+      refreshCoords()
+      renderParkingList()
+    }, {
+      enableHighAccuracy: true
+    })
+
+    refreshCoords()
+    renderParkingList()
+  </script>
+</body>
+</html>

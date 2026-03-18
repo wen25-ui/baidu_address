@@ -1,0 +1,193 @@
+{
+  "pages": [
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/dashboard/dashboard",
+      "style": {
+        "navigationBarTitleText": "管理控制台"
+      }
+    },
+    {
+      "path": "pages/order/order",
+      "style": {
+        "navigationBarTitleText": "订单管理"
+      }
+    },
+    {
+      "path": "pages/navigation/navigation",
+      "style": {
+        "navigationBarTitleText": "车位审核"
+      }
+    },
+    {
+      "path": "pages/billing/billing",
+      "style": {
+        "navigationBarTitleText": "计费统计"
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "车位共享"
+      }
+    },
+    {
+      "path": "pages/parking/detail",
+      "style": {
+        "navigationBarTitleText": "车位详情"
+      }
+    },
+    {
+      "path": "pages/parking/nearby",
+      "style": {
+        "navigationBarTitleText": "附近车位"
+      }
+    },
+    {
+      "path": "pages/parking/search",
+      "style": {
+        "navigationBarTitleText": "搜索车位"
+      }
+    },
+    {
+      "path": "pages/parking/publish",
+      "style": {
+        "navigationBarTitleText": "发布车位"
+      }
+    },
+    {
+      "path": "pages/parking/myspaces",
+      "style": {
+        "navigationBarTitleText": "我的车位"
+      }
+    },
+    {
+      "path": "pages/reservation/create",
+      "style": {
+        "navigationBarTitleText": "预约车位"
+      }
+    },
+    {
+      "path": "pages/reservation/detail",
+      "style": {
+        "navigationBarTitleText": "订单详情"
+      }
+    },
+    {
+      "path": "pages/reservation/list",
+      "style": {
+        "navigationBarTitleText": "我的订单"
+      }
+    },
+    {
+      "path": "pages/reservation/received",
+      "style": {
+        "navigationBarTitleText": "收到的订单"
+      }
+    },
+    {
+      "path": "pages/reservation/verify",
+      "style": {
+        "navigationBarTitleText": "订单核销"
+      }
+    },
+    {
+      "path": "pages/wallet/wallet",
+      "style": {
+        "navigationBarTitleText": "我的钱包"
+      }
+    },
+    {
+      "path": "pages/wallet/recharge",
+      "style": {
+        "navigationBarTitleText": "充值"
+      }
+    },
+    {
+      "path": "pages/wallet/withdraw",
+      "style": {
+        "navigationBarTitleText": "提现"
+      }
+    },
+    {
+      "path": "pages/wallet/transactions",
+      "style": {
+        "navigationBarTitleText": "交易记录"
+      }
+    },
+    {
+      "path": "pages/favorite/favorite",
+      "style": {
+        "navigationBarTitleText": "我的收藏"
+      }
+    },
+    {
+      "path": "pages/credit/credit",
+      "style": {
+        "navigationBarTitleText": "信用分"
+      }
+    },
+    {
+      "path": "pages/user/user",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    },
+    {
+      "path": "pages/user/profile",
+      "style": {
+        "navigationBarTitleText": "个人信息"
+      }
+    },
+    {
+      "path": "pages/user/verify",
+      "style": {
+        "navigationBarTitleText": "实名认证"
+      }
+    },
+    {
+      "path": "pages/revenue/revenue",
+      "style": {
+        "navigationBarTitleText": "平台收入"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "车位共享",
+    "navigationBarBackgroundColor": "#007bff",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#007bff",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/icons/home.png",
+        "selectedIconPath": "static/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/reservation/list",
+        "text": "订单",
+        "iconPath": "static/icons/order.png",
+        "selectedIconPath": "static/icons/order-active.png"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "我的",
+        "iconPath": "static/icons/user.png",
+        "selectedIconPath": "static/icons/user-active.png"
+      }
+    ]
+  }
+}

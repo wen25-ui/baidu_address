@@ -1,27 +1,29 @@
 {
   "name": "navigation-management-platform",
   "version": "1.0.0",
-  "description": "A management platform for navigation services with real-time navigation and billing.",
-  "private": true,
+  "description": "导航管理平台微信小程序",
+  "main": "main.js",
   "scripts": {
-    "serve": "vite",
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint ."
+    "dev:mp-weixin": "uni -p mp-weixin",
+    "build:mp-weixin": "uni build -p mp-weixin",
+    "dev:h5": "uni -p h5",
+    "build:h5": "uni build -p h5"
   },
   "dependencies": {
-    "vue": "^3.3.0",
-    "vue-router": "^4.2.0",
-    "vuex": "^4.1.0",
-    "axios": "^1.6.0",
-    "element-plus": "^2.4.0"
+    "@dcloudio/uni-app": "3.0.0-alpha-5000120260211001",
+    "@dcloudio/uni-app-plus": "3.0.0-alpha-5000120260211001",
+    "@dcloudio/uni-components": "3.0.0-alpha-5000120260211001",
+    "@dcloudio/uni-h5": "3.0.0-alpha-5000120260211001",
+    "@dcloudio/uni-mp-weixin": "3.0.0-alpha-5000120260211001",
+    "vue": "^3.4.21",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.5.0",
-    "vite": "^5.0.0",
-    "eslint": "^8.0.0",
-    "eslint-plugin-vue": "^9.0.0"
-  },
-  "license": "MIT"
+    "@dcloudio/types": "^3.4.8",
+    "@dcloudio/uni-automator": "3.0.0-alpha-5000120260211001",
+    "@dcloudio/uni-cli-shared": "3.0.0-alpha-5000120260211001",
+    "@dcloudio/uni-stacktracey": "3.0.0-alpha-5000120260211001",
+    "@dcloudio/vite-plugin-uni": "3.0.0-alpha-5000120260211001",
+    "vite": "^5.2.8"
+  }
 }

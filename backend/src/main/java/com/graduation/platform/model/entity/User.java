@@ -1,77 +1,102 @@
 package com.graduation.platform.model.entity;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 
-@Entity
-@Table(name = "users")
+import java.time.LocalDateTime;
+
+/**
+ * User entity.
+ */
+@Data
+@TableName("user")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    /**
+     * WeChat openid.
+     */
+    private String openid;
+
+    /**
+     * Username for password login.
+     */
     private String username;
 
-    @Column(nullable = false)
+    /**
+     * BCrypt encoded password.
+     */
+    @JsonIgnore
     private String password;
 
-    @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
+    /**
+     * Phone number.
+     */
     private String phone;
 
-    @Column(nullable = false)
-    private String role;
+    /**
+     * Nickname.
+     */
+    private String nickname;
 
-    // Getters and Setters
+    /**
+     * Avatar URL.
+     */
+    private String avatar;
 
-    public Long getId() {
-        return id;
-    }
+    /**
+     * Real name.
+     */
+    private String realName;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    /**
+     * ID card.
+     */
+    private String idCard;
 
-    public String getUsername() {
-        return username;
-    }
+    /**
+     * Whether user is real-name verified. 0-no, 1-yes.
+     */
+    private Integer isVerified;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    /**
+     * Credit score.
+     */
+    private Integer creditScore;
 
-    public String getPassword() {
-        return password;
-    }
+    /**
+     * Whether user can publish parking spaces. 0-no, 1-yes.
+     */
+    private Integer isOwner;
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    /**
+     * Status. 0-disabled, 1-active.
+     */
+    private Integer status;
 
-    public String getEmail() {
-        return email;
-    }
+    /**
+     * Logical delete flag. 0-not deleted, 1-deleted.
+     */
+    @TableLogic
+    private Integer deleted;
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    /**
+     * Created time.
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createdAt;
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    /**
+     * Updated time.
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updatedAt;
 }

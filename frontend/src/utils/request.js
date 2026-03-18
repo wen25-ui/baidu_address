@@ -1,37 +1,64 @@
-import axios from 'axios';
+import { getToken } from './auth';
 
-const request = axios.create({
-    baseURL: '',
-    timeout: 10000,
-});
+const BASE_URL = 'http://localhost:8080/api';
+const TIMEOUT = 10000;
+const AUTH_ENDPOINTS = ['/v1/user/login', '/v1/user/register', '/v1/user/wx-login', '/admin/login'];
 
-// 请求拦截器
-request.interceptors.request.use(
-    config => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
-        }
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
+const request = (options) => {
+  return new Promise((resolve, reject) => {
+    const token = getToken();
+    const requestPath = options.url || '';
+    const isAuthEndpoint = AUTH_ENDPOINTS.includes(requestPath);
+    const header = {
+      'Content-Type': 'application/json',
+      ...(options.header || {})
+    };
+    if (token) {
+      header['Authorization'] = `Bearer ${token}`;
     }
-);
 
-// 响应拦截器
-request.interceptors.response.use(
-    response => {
-        return response.data;
-    },
-    error => {
-        // 处理错误响应
-        if (error.response && error.response.status === 401) {
-            localStorage.removeItem('token');
-            window.location.href = '/';
+    uni.request({
+      url: BASE_URL + options.url,
+      method: options.method || 'GET',
+      data: options.data || {},
+      header,
+      timeout: TIMEOUT,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          resolve(res.data);
+        } else if (res.statusCode === 401) {
+          const message = (res.data && res.data.message) || '未授权，请重新登录';
+          if (!isAuthEndpoint) {
+            // token 过期或未授权，跳转登录
+            uni.removeStorageSync('token');
+            uni.removeStorageSync('userInfo');
+            uni.reLaunch({ url: '/pages/login/login' });
+          }
+          reject(new Error(message));
+        } else {
+          uni.showToast({
+            title: res.data.message || '请求失败',
+            icon: 'none'
+          });
+          reject(new Error(res.data.message || '请求失败'));
         }
-        return Promise.reject(error);
-    }
-);
+      },
+      fail: (err) => {
+        uni.showToast({
+          title: '网络异常，请稍后重试',
+          icon: 'none'
+        });
+        reject(err);
+      }
+    });
+  });
+};
+
+// 便捷方法
+request.get = (url, data, header) => request({ url, method: 'GET', data, header });
+request.post = (url, data, header) => request({ url, method: 'POST', data, header });
+request.put = (url, data, header) => request({ url, method: 'PUT', data, header });
+request.delete = (url, data, header) => request({ url, method: 'DELETE', data, header });
 
 export default request;
+

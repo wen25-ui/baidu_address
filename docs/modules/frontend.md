@@ -4,82 +4,83 @@
 
 ## 模块说明
 
-前端使用 Vue 3 + Vite 构建的单页面应用（SPA），集成百度地图实现可视化导航。
+前端使用 **uni-app (Vue 3)** 构建的微信小程序，使用微信原生地图组件实现导航可视化。
 
 ## 技术栈
 
-| 技术 | 版本 | 说明 |
+| 技术 | 说明 |
+| ---- | ---- |
+| uni-app | 跨平台框架（Vue 3 版本） |
+| Vite | 构建工具 |
+| Vuex | 状态管理 |
+| uni.request | HTTP 请求（替代 Axios） |
+| 微信地图组件 | 地图可视化（替代百度地图 JS API） |
+
+## 项目结构
+
+```
+frontend/
+ package.json           # 依赖配置
+ vite.config.js         # Vite + uni 插件配置
+ index.html             # H5 入口
+ src/
+    main.js            # 应用入口
+    App.vue            # 根组件 + 全局样式
+    pages.json         # 路由 + tabBar 配置
+    manifest.json      # 小程序配置
+    pages/             # 页面目录
+       login/login.vue
+       dashboard/dashboard.vue
+       order/order.vue
+       navigation/navigation.vue
+       billing/billing.vue
+       user/user.vue
+       revenue/revenue.vue
+    api/               # 后端 API 接口
+       user.js
+       order.js
+       navigation.js
+       billing.js
+    store/index.js     # Vuex 状态管理
+    utils/
+       request.js     # uni.request 封装
+       auth.js        # 认证/存储工具
+    static/            # 静态资源
+ dist/build/mp-weixin/  # 编译产物（微信开发者工具导入此目录）
+```
+
+## 页面说明
+
+| 页面 | 路径 | 说明 |
 | ---- | ---- | ---- |
-| Vue.js | ^3.3.0 | 前端框架 |
-| Vite | ^5.0.0 | 构建工具 |
-| Vue Router | ^4.2.0 | 路由管理 |
-| Vuex | ^4.1.0 | 状态管理 |
-| Axios | ^1.6.0 | HTTP 请求 |
-| Element Plus | ^2.4.0 | UI 组件库 |
-| 百度地图 JS API | - | 地图可视化 |
+| 登录 | pages/login/login | 用户名密码登录 |
+| 仪表盘 | pages/dashboard/dashboard | 平台概览 + 快捷操作 + 最近订单 |
+| 订单管理 | pages/order/order | 订单列表 + 查看/取消 |
+| 实时导航 | pages/navigation/navigation | 微信地图 + 路线选择 + 定位 |
+| 计费管理 | pages/billing/billing | 计费概览 + 记录列表 |
+| 我的 | pages/user/user | 个人资料 + 用户管理 + 退出 |
+| 平台收入 | pages/revenue/revenue | 收入概览 + 明细 |
 
 ## 运行方式
 
 ```bash
-cd frontend
-npm install
-npm run serve    # 开发环境
-npm run build    # 生产构建
-npm run preview  # 预览构建产物
+# 1. 安装依赖
+cd frontend && npm install
+
+# 2. 编译微信小程序
+npm run build:mp-weixin
+
+# 3. 在微信开发者工具中导入 dist/build/mp-weixin 目录
 ```
-
-开发服务器默认运行在 `http://localhost:3000`，API 请求通过 Vite 代理转发到后端 `http://localhost:8080`。
-
-## 文件清单
-
-### 页面视图 (`views/`)
-
-| 文件 | 路由 | 说明 |
-| ---- | ---- | ---- |
-| `Login.vue` | `/` | 登录页面 |
-| `Dashboard.vue` | `/dashboard` | 仪表盘 |
-| `UserManagement.vue` | `/users` | 用户管理 |
-| `OrderManagement.vue` | `/orders` | 订单管理 |
-| `NavigationMap.vue` | `/navigation` | 导航地图 |
-| `BillingManagement.vue` | `/billing` | 计费管理 |
-| `PlatformRevenue.vue` | `/revenue` | 平台营收 |
-
-### 组件 (`components/`)
-
-| 文件 | 说明 |
-| ---- | ---- |
-| `Header.vue` | 顶部导航栏 |
-| `Sidebar.vue` | 侧边栏菜单 |
-| `BaiduMap.vue` | 百度地图组件 |
-| `OrderTable.vue` | 订单表格（支持 props 传入数据） |
-| `BillingDetail.vue` | 计费详情 |
-| `RealTimeNavigation.vue` | 实时导航 |
-
-### API 调用 (`api/`)
-
-| 文件 | 对应后端模块 | 导出方法 |
-| ---- | ---- | ---- |
-| `user.js` | 用户管理 | `login`, `register`, `getUserInfo`, `getUsers`, `updateUser`, `deleteUser` |
-| `order.js` | 订单管理 | `createOrder`, `getOrderList`, `getOrderDetail`, `updateOrderStatus`, `deleteOrder` |
-| `navigation.js` | 导航服务 | `getRoutes`, `startNavigation`, `endNavigation`, `getNavigationStatus` |
-| `billing.js` | 计费管理 | `getBillingRecords`, `createBillingRecord`, `updateBillingRecord`, `deleteBillingRecord`, `fetchRevenueData` |
-
-### 工具 (`utils/`)
-
-| 文件 | 说明 |
-| ---- | ---- |
-| `request.js` | Axios 请求封装（含 Token 拦截器） |
-| `auth.js` | 认证工具（Token 存取） |
-| `map.js` | 百度地图工具函数 |
 
 ## 变更记录
 
-### 2026-03-05 — 前端整改为 Vue 3 Web 应用
+### 2026-03-05
 
-- 升级所有依赖到稳定版本（Vue 3.3、Vite 5、Element Plus 2.4）
-- Vue 2 → Vue 3 语法全面迁移（router、store、main.js）
-- 统一 API 请求层，添加 Token 认证拦截器
-- 修复所有组件和页面中的 API 调用方式
-- 修复路由路径一致性
-- 添加 `@` 路径别名
-- 登录页独立布局，其他页面使用 Header + Sidebar 布局
+- 前端重构：Vue.js + Vite Web 应用  uni-app 微信小程序
+- 替换 Axios  uni.request
+- 替换 Vue Router  pages.json 路由
+- 替换 Element Plus  小程序原生组件
+- 替换百度地图  微信 map 组件
+- 替换 localStorage  uni.getStorageSync
+- 编译通过，产物已就绪

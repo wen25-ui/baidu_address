@@ -1,30 +1,15 @@
-import request from '../utils/request';
+import {
+  getAdminReservations,
+  getAdminReservationDetail
+} from './admin.js'
 
-const orderApi = {
-  // 创建订单
-  createOrder(data) {
-    return request.post('/api/orders', data);
-  },
+export const getOrderList = (params = {}) => getAdminReservations(params)
 
-  // 获取订单列表
-  getOrderList(params) {
-    return request.get('/api/orders', { params });
-  },
+export const getOrderDetail = (orderId) => getAdminReservationDetail(orderId)
 
-  // 获取订单详情
-  getOrderDetail(orderId) {
-    return request.get(`/api/orders/${orderId}`);
-  },
+// Admin side does not provide direct delete endpoint.
+export const deleteOrder = (orderId) =>
+  Promise.reject(new Error(`订单 ${orderId} 不支持直接删除，请在后端流程中取消`))
 
-  // 更新订单状态
-  updateOrderStatus(orderId, data) {
-    return request.put(`/api/orders/${orderId}/status`, data);
-  },
-
-  // 删除订单
-  deleteOrder(orderId) {
-    return request.delete(`/api/orders/${orderId}`);
-  }
-};
-
-export default orderApi;
+export const updateOrderStatus = () =>
+  Promise.reject(new Error('管理端暂不支持手动更新订单状态'))

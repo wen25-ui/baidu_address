@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baidu Map</title>
+  <style>
+    html, body, #map { width: 100%; height: 100%; margin: 0; padding: 0; }
+    .controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 999;
+    }
+    .btn {
+      background: rgba(255,255,255,0.9);
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .coords {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      display: none;
+      z-index: 999;
+    }
+    .search {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 8px;
+      padding: 8px;
+      z-index: 999;
+    }
+    .search-row { display: flex; gap: 6px; }
+    .search-input {
+      flex: 1;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 12px;
+    }
+    .result-list {
+      max-height: 160px;
+      overflow: auto;
+      margin-top: 6px;
+      font-size: 12px;
+    }
+    .result-item { padding: 6px 4px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+    .result-item:last-child { border-bottom: none; }
+  </style>
+  <script src="https://api.map.baidu.com/api?v=3.0&ak=Ysj2vZPKWz8nwGRiPYD7MBBOvVtQiGlt"></script>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="coords" id="coords"></div>
+  <div class="controls">
+    <button class="btn" id="btnLocate">复位</button>
+    <button class="btn" id="btnCoords">坐标</button>
+  </div>
+  <div class="search">
+    <div class="search-row">
+      <input id="keyword" class="search-input" placeholder="搜索目的地（百度）" />
+      <button class="btn" id="btnSearch">搜索</button>
+      <button class="btn" id="btnNav">导航</button>
+    </div>
+    <div class="result-list" id="results"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const lat = parseFloat(params.get('lat')) || 39.915;
+    const lng = parseFloat(params.get('lng')) || 116.404;
+    const destLat = parseFloat(params.get('destLat'));
+    const destLng = parseFloat(params.get('destLng'));
+    const destName = params.get('destName') ? decodeURIComponent(params.get('destName')) : '';
+    const markersParam = params.get('markers') ? decodeURIComponent(params.get('markers')) : '';
+
+    let markerList = [];
+    try { markerList = markersParam ? JSON.parse(markersParam) : []; } catch (e) {}
+
+    const map = new BMap.Map('map');
+    let currentPoint = new BMap.Point(lng, lat);
+    map.centerAndZoom(currentPoint, 14);
+    map.enableScrollWheelZoom(true);
+
+    const currentMarker = new BMap.Marker(currentPoint);
+    map.addOverlay(currentMarker);
+
+    markerList.forEach(m => {
+      if (!m || !m.lng || !m.lat) return;
+      const pt = new BMap.Point(m.lng, m.lat);
+      const marker = new BMap.Marker(pt);
+      if (m.name) {
+        const label = new BMap.Label(m.name, { offset: new BMap.Size(10, -10) });
+        marker.setLabel(label);
+      }
+      map.addOverlay(marker);
+    });
+
+    let destinationPoint = null;
+    if (!Number.isNaN(destLat) && !Number.isNaN(destLng)) {
+      destinationPoint = new BMap.Point(destLng, destLat);
+      const destMarker = new BMap.Marker(destinationPoint);
+      map.addOverlay(destMarker);
+      if (destName) {
+        destMarker.setLabel(new BMap.Label(destName, { offset: new BMap.Size(10, -10) }));
+      }
+    }
+
+    const coordsEl = document.getElementById('coords');
+    function updateCoords() {
+      coordsEl.textContent = `Lat: ${currentPoint.lat.toFixed(6)}  Lng: ${currentPoint.lng.toFixed(6)}`;
+    }
+    updateCoords();
+
+    document.getElementById('btnLocate').onclick = () => {
+      const geo = new BMap.Geolocation();
+      geo.getCurrentPosition(res => {
+        if (res && res.point) {
+          currentPoint = res.point;
+          map.centerAndZoom(currentPoint, 15);
+          currentMarker.setPosition(currentPoint);
+          updateCoords();
+        }
+      }, { enableHighAccuracy: true });
+    };
+
+    let showCoords = false;
+    document.getElementById('btnCoords').onclick = () => {
+      showCoords = !showCoords;
+      coordsEl.style.display = showCoords ? 'block' : 'none';
+    };
+
+    const resultsEl = document.getElementById('results');
+    const local = new BMap.LocalSearch(map, {
+      onSearchComplete: function (res) {
+        resultsEl.innerHTML = '';
+        if (local.getStatus() !== BMAP_STATUS_SUCCESS) return;
+        for (let i = 0; i < res.getCurrentNumPois(); i++) {
+          const poi = res.getPoi(i);
+          const div = document.createElement('div');
+          div.className = 'result-item';
+          div.textContent = poi.title + (poi.address ? ` - ${poi.address}` : '');
+          div.onclick = () => {
+            destinationPoint = poi.point;
+            map.centerAndZoom(destinationPoint, 16);
+          };
+          resultsEl.appendChild(div);
+        }
+      }
+    });
+
+    document.getElementById('btnSearch').onclick = () => {
+      const keyword = document.getElementById('keyword').value.trim();
+      if (!keyword) return;
+      local.searchNearby(keyword, currentPoint, 10000);
+    };
+
+    document.getElementById('btnNav').onclick = () => {
+      if (!destinationPoint) return;
+      const driving = new BMap.DrivingRoute(map, { renderOptions: { map, autoViewport: true } });
+      driving.search(currentPoint, destinationPoint);
+    };
+
+    if (destinationPoint) {
+      const driving = new BMap.DrivingRoute(map, { renderOptions: { map, autoViewport: true } });
+      driving.search(currentPoint, destinationPoint);
+    }
+  </script>
+</body>
+</html>

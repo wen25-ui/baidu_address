@@ -1,15 +1,54 @@
 package com.graduation.platform.service;
 
 import com.graduation.platform.model.entity.User;
-import com.graduation.platform.model.dto.UserDTO;
 
-import java.util.List;
-
+/**
+ * User service.
+ */
 public interface UserService {
-    User createUser(UserDTO userDTO);
+
+    /**
+     * WeChat mini-program login.
+     */
+    User wxLogin(String code);
+
+    /**
+     * Register with username/password.
+     */
+    User register(String username, String password, String phone, String nickname);
+
+    /**
+     * Username/password login.
+     */
     User login(String username, String password);
-    User getUserById(Long id);
-    List<User> getAllUsers();
-    User updateUser(Long id, UserDTO userDTO);
-    void deleteUser(Long id);
+
+    /**
+     * Get user by id.
+     */
+    User getById(Long id);
+
+    /**
+     * Get user by openid.
+     */
+    User getByOpenid(String openid);
+
+    /**
+     * Update user profile.
+     */
+    boolean updateUser(User user);
+
+    /**
+     * Verify real name.
+     */
+    boolean verifyRealName(Long userId, String realName, String idCard);
+
+    /**
+     * Update user credit score.
+     */
+    boolean updateCreditScore(Long userId, Integer delta, String reason);
+
+    /**
+     * Check whether user has enough credit score.
+     */
+    boolean checkCreditScore(Long userId);
 }
